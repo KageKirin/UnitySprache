@@ -20,6 +20,9 @@ jobs:
       - name: Fetch files
         run: make
 
+      - name: Generate metafiles
+        uses: KageKirin/metagen-gha@v0
+
       - name: Pack
         run: npm pack
       - name: Verify
