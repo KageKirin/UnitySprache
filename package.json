@@ -1,0 +1,32 @@
+{
+    "name": "com.kagekirin.github.sprache",
+    "version": "0.0.0",
+    "displayName": "Sprache",
+    "description": "A tiny, friendly, C# parser construction library",
+    "unity": "2020.1^",
+    "files": [
+        "Assets/Scripts/Sprache/src/Sprache/**.cs",
+        "Assets/Scripts/Sprache/src/Sprache/**.cs.meta",
+        "Assets/Scripts/Sprache.asmdef*",
+        "Assets/Scripts/Sprache/license.txt",
+        "Assets/Scripts/Sprache/README.md"
+    ],
+    "dependencies": {},
+    "keywords": [
+        "csharp",
+        "parser"
+    ],
+    "author": {
+        "name": "KageKirin",
+        "email": "kagekirin@gmail.com",
+        "url": "https://github.com/kagekirin"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KageKirin/UnitySprache.git",
+        "directory": "com.kagekirin.unitysprache"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/@kagekirin"
+    }
+}
