@@ -92,3 +92,30 @@ jobs:
         run: tar xvf *.tgz
       - name: Show unpacked contents
         run: ls *
+
+      ## section: update package version
+      - name: Get package version
+        uses: kagekirin/get-node-package-version@v1
+        id: getpkg
+        with:
+          file: package/package.json
+      - name: Print package version
+        run: echo ${{ steps.getpkg.outputs.version }}
+      - name: Set Package version
+        uses: kagekirin/set-node-package-version@v1
+        id: setpkg
+        with:
+          file: package/package.json
+          version: ${{ steps.getpkg.outputs.version }}-foobar
+      - name: Print Package version
+        run: |
+          echo ${{ steps.setpkg.outputs.version }}
+          cat package/package.json
+
+      ## section: repack
+      - name: Re-pack
+        run: cd package && yarn pack
+      - name: Check package
+        run: |
+          ls package/*.tgz
+          tar tvf package/*.tgz
