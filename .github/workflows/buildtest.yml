@@ -32,6 +32,26 @@ jobs:
           ls Assets/Scripts/Sprache/src/Sprache/*.meta
           ls Assets/Scripts/Sprache/src/Sprache/*/*.meta
 
+      ## section: set package version
+      - name: Get CSProj version
+        uses: kagekirin/get-csproj-version@v1
+        id: csproj
+        with:
+          file: Assets/Scripts/Sprache/src/Sprache/Sprache.csproj
+          xpath: //PropertyGroup/VersionPrefix
+      - name: Print CSProj version
+        run: echo ${{ steps.csproj.outputs.version }}
+
+      - name: Set Package version
+        uses: kagekirin/set-node-package-version@v1
+        id: pkg
+        with:
+          version: ${{ steps.csproj.outputs.version }}
+      - name: Print Package version
+        run: |
+          echo ${{ steps.pkg.outputs.version }}
+          cat package.json
+
       - name: Pack
         run: yarn pack
       - name: Verify
