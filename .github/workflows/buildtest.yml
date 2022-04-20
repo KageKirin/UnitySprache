@@ -1,0 +1,121 @@
+name: Build Test
+
+on: [push]
+
+## Does the same stuff as publish
+## EXCEPT publishing the artifacts
+
+jobs:
+  buildtest:
+    name: Test build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: yarn install
+      - name: Fetch files
+        run: make
+
+      - name: Generate metafiles
+        #uses: KageKirin/metagen-gha@v0 ## sadly doesn't work yet
+        run: |
+          npm install -g https://github.com/kagekirin/metagen-js/tarball/main
+          metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/**.cs"
+          metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/*/*.cs"
+
+      - name: Check generated metafiles
+        run: |
+          ls Assets/Scripts/Sprache/src/Sprache/*.meta
+          ls Assets/Scripts/Sprache/src/Sprache/*/*.meta
+
+      ## section: set package version
+      - name: Get CSProj version
+        uses: kagekirin/get-csproj-version@v1
+        id: csproj
+        with:
+          file: Assets/Scripts/Sprache/src/Sprache/Sprache.csproj
+          xpath: //PropertyGroup/VersionPrefix
+      - name: Print CSProj version
+        run: echo ${{ steps.csproj.outputs.version }}
+
+      - name: Set Package version
+        uses: kagekirin/set-node-package-version@v1
+        id: pkg
+        with:
+          version: ${{ steps.csproj.outputs.version }}
+      - name: Print Package version
+        run: |
+          echo ${{ steps.pkg.outputs.version }}
+          cat package.json
+
+      - name: Pack
+        run: yarn pack
+      - name: Verify
+        run: |
+          ls com.kagekirin.github.sprache*.tgz
+          tar tvf com.kagekirin.github.sprache*.tgz
+
+      - name: Store package name in env
+        run: echo "package_name=`ls com.kagekirin.github.sprache*.tgz`" >> $GITHUB_ENV
+      - name: Verify package_name in env
+        run: echo "${{ env.package_name }}"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ env.package_name }}
+          name: package.tgz
+          retention-days: 1
+
+  unpacktest:
+    name: Test unpack
+    needs: buildtest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: package.tgz
+      - name: Show download
+        run: ls -alG
+      - name: Show contents
+        run: tar tvf *.tgz
+      - name: Unpack contents
+        run: tar xvf *.tgz
+      - name: Show unpacked contents
+        run: ls *
+
+      ## section: update package version
+      - name: Get package version
+        uses: kagekirin/get-node-package-version@v1
+        id: getpkg
+        with:
+          file: package/package.json
+      - name: Print package version
+        run: echo ${{ steps.getpkg.outputs.version }}
+      - name: Set Package version
+        uses: kagekirin/set-node-package-version@v1
+        id: setpkg
+        with:
+          file: package/package.json
+          version: ${{ steps.getpkg.outputs.version }}-foobar
+      - name: Print Package version
+        run: |
+          echo ${{ steps.setpkg.outputs.version }}
+          cat package/package.json
+
+      ## section: repack
+      - name: Re-pack
+        run: cd package && yarn pack
+      - name: Check package
+        run: |
+          ls package/*.tgz
+          tar tvf package/*.tgz

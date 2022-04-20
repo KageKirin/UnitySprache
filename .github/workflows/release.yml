@@ -1,0 +1,20 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+
+name: Release package (NPM)
+
+on:
+  release:
+    types: [published, edited]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - uses: ./.github/workflows/publish.yml
+        with:
+          tag: ${{ github.ref_name }}
