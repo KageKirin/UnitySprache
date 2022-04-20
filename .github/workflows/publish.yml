@@ -102,7 +102,7 @@ jobs:
       - name: Install dependencies
         run: cd package && yarn install
       - name: Publish to GitHub NPM Registry
-        run: cd package && npm publish --access public
+        run: cd package && npm publish --access public --verbose
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -141,6 +141,6 @@ jobs:
       - name: Install dependencies
         run: cd package && yarn install
       - name: Publish to NPM.JS Registry
-        run: cd package && npm publish --access public
+        run: cd package && npm publish --access public --verbose
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
