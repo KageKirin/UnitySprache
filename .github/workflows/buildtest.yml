@@ -63,3 +63,32 @@ jobs:
         run: echo "package_name=`ls com.kagekirin.github.sprache*.tgz`" >> $GITHUB_ENV
       - name: Verify package_name in env
         run: echo "${{ env.package_name }}"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ env.package_name }}
+          name: package.tgz
+          retention-days: 1
+
+  unpacktest:
+    name: Test unpack
+    needs: buildtest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: package.tgz
+      - name: Show download
+        run: ls -alG
+      - name: Show contents
+        run: tar tvf *.tgz
+      - name: Unpack contents
+        run: tar xvf *.tgz
+      - name: Show unpacked contents
+        run: ls *
