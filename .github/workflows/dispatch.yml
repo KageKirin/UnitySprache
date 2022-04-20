@@ -15,3 +15,5 @@ jobs:
     uses: kagekirin/UnitySprache/.github/workflows/publish.yml@main
     with:
       tag: ${{ github.event.inputs.tag }}
+    secrets:
+      NPM_TOKEN: ${{secrets.NPM_TOKEN}}
