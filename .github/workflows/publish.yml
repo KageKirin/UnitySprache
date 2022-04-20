@@ -73,7 +73,7 @@ jobs:
           retention-days: 1
 
 
-publish-to-github-registry:
+  publish-to-github-registry:
     needs: release
     runs-on: ubuntu-latest
     permissions:
