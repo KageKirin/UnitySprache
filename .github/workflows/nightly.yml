@@ -9,3 +9,5 @@ jobs:
     uses: kagekirin/UnitySprache/.github/workflows/publish.yml@main
     with:
       tag: nightly
+    secrets:
+      NPM_TOKEN: ${{secrets.NPM_TOKEN}}
