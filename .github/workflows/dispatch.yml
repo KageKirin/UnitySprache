@@ -11,7 +11,7 @@ on:
         type: string
 
 jobs:
-  release:
+  dispatch:
     uses: kagekirin/UnitySprache/.github/workflows/publish.yml@main
     with:
-      tag: ${{ inputs.tag }}
+      tag: ${{ github.event.inputs.tag }}
