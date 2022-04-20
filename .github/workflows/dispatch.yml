@@ -19,6 +19,6 @@ jobs:
         with:
           node-version: 14
 
-      - uses: .github/workflows/publish
+      - uses: ./.github/workflows/publish
         with:
           tag: ${{ inputs.tag }}
