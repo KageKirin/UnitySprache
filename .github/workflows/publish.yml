@@ -134,7 +134,9 @@ jobs:
         run: ls *
 
       - name: Patch package.json
-        run: sed -i -e "s|npm.pkg.github.com/@kagekirin|registry.npmjs.org|g" package/package.json
+        run: |
+          sed -i -e "s|npm.pkg.github.com/@kagekirin|registry.npmjs.org|g" package/package.json
+          cat package/package.json
 
       - name: Install dependencies
         run: cd package && yarn install
