@@ -1,0 +1,144 @@
+name: Publish package (NPM)
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: yarn install
+      - name: Fetch files
+        run: make
+
+      - name: Generate metafiles
+        run: |
+          npm install -g https://github.com/kagekirin/metagen-js/tarball/main
+          metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/**.cs"
+          metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/*/*.cs"
+
+      - name: Check generated metafiles
+        run: |
+          ls Assets/Scripts/Sprache/src/Sprache/*.meta
+          ls Assets/Scripts/Sprache/src/Sprache/*/*.meta
+
+      ## section: set package version
+      - name: Get CSProj version
+        uses: kagekirin/get-csproj-version@v1
+        id: csproj
+        with:
+          file: Assets/Scripts/Sprache/src/Sprache/Sprache.csproj
+          xpath: //PropertyGroup/VersionPrefix
+      - name: Print CSProj version
+        run: echo ${{ steps.csproj.outputs.version }}
+
+      - name: Set Package version
+        uses: kagekirin/set-node-package-version@v1
+        id: pkg
+        with:
+          version: ${{ steps.csproj.outputs.version }}-${{ inputs.tag }}
+      - name: Print Package version
+        run: |
+          echo ${{ steps.pkg.outputs.version }}
+          cat package.json
+
+      - name: Pack
+        run: yarn pack
+      - name: Verify
+        run: |
+          ls com.kagekirin.github.sprache*.tgz
+          tar tvf com.kagekirin.github.sprache*.tgz
+
+      - name: Store package name in env
+        run: echo "package_name=`ls com.kagekirin.github.sprache*.tgz`" >> $GITHUB_ENV
+      - name: Verify package_name in env
+        run: echo "${{ env.package_name }}"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ env.package_name }}
+          name: package.tgz
+          retention-days: 1
+
+
+publish-to-github-registry:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://npm.pkg.github.com/
+          scope: '@kagekirin'
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: package.tgz
+      - name: Show download
+        run: ls -alG
+      - name: Show contents
+        run: tar tvf *.tgz
+      - name: Unpack contents
+        run: tar xvf *.tgz
+      - name: Show unpacked contents
+        run: ls *
+
+      - name: Install dependencies
+        run: cd package && yarn install
+      - name: Publish to GitHub NPM Registry
+        run: cd package && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+
+  publish-to-npmjs-registry:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+          scope: '@kagekirin'
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: package.tgz
+      - name: Show download
+        run: ls -alG
+      - name: Show contents
+        run: tar tvf *.tgz
+      - name: Unpack contents
+        run: tar xvf *.tgz
+      - name: Show unpacked contents
+        run: ls *
+
+      - name: Patch package.json
+        run: sed -i -e "s|npm.pkg.github.com/@kagekirin|registry.npmjs.org|g" package/package.json
+
+      - name: Install dependencies
+        run: cd package && yarn install
+      - name: Publish to NPM.JS Registry
+        run: cd package && npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
