@@ -27,6 +27,11 @@ jobs:
           metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/**.cs"
           metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/*/*.cs"
 
+      - name: Check generated metafiles
+        run: |
+          ls Assets/Scripts/Sprache/src/Sprache/*.meta
+          ls Assets/Scripts/Sprache/src/Sprache/*/*.meta
+
       - name: Pack
         run: npm pack
       - name: Verify
