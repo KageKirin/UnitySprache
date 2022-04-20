@@ -74,7 +74,7 @@ jobs:
 
 
   publish-to-github-registry:
-    needs: release
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -108,7 +108,7 @@ jobs:
 
 
   publish-to-npmjs-registry:
-    needs: release
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
