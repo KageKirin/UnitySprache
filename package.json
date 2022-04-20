@@ -6,7 +6,7 @@
     "unity": "2020.1^",
     "files": [
         "Assets/Scripts/Sprache/src/Sprache/**.cs",
-        "Assets/Scripts/Sprache/src/Sprache/**.cs.meta",
+        "Assets/Scripts/Sprache/src/Sprache/**.meta",
         "Assets/Scripts/Sprache.asmdef*",
         "Assets/Scripts/Sprache/license.txt",
         "Assets/Scripts/Sprache/README.md"
