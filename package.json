@@ -5,7 +5,7 @@
     "description": "A tiny, friendly, C# parser construction library",
     "unity": "2020.1^",
     "files": [
-        "Assets/Scripts/Sprache/src/Sprache/**.cs*",
+        "Assets/Scripts/Sprache/src/Sprache/**.cs",
         "Assets/Scripts/Sprache/src/Sprache/**.meta",
         "Assets/Scripts/Sprache.asmdef*",
         "Assets/Scripts/Sprache/license.txt",
