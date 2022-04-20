@@ -16,6 +16,6 @@ jobs:
         with:
           node-version: 14
 
-      - uses: ./.github/workflows/publish
+      - uses: kagekirin/UnitySprache/.github/workflows/publish.yml@main
         with:
           tag: ${{ github.ref_name }}
