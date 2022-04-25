@@ -24,6 +24,8 @@ jobs:
         #uses: KageKirin/metagen-gha@v0 ## sadly doesn't work yet
         run: |
           npm install -g https://github.com/kagekirin/metagen-js/tarball/main
+          metagen -s UnitySprache -o "Assets/Scripts/Sprache/src"
+          metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache"
           metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/**.cs"
           metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/*/*.cs"
 
@@ -114,7 +116,7 @@ jobs:
 
       ## section: repack
       - name: Re-pack
-        run: cd package && yarn pack
+        run: cd package && npm pack
       - name: Check package
         run: |
           ls package/*.tgz

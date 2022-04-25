@@ -5,9 +5,21 @@ on:
     - cron: '0 10 * * *'
 
 jobs:
+  date:
+    runs-on: ubuntu-latest
+    outputs:
+      today: ${{ steps.date.outputs.today }}
+    steps:
+      - name: Get date
+        id: date
+        run: echo "::set-output name=today::$(date +'%Y-%m-%d')"
+      - name: Print date
+        run: echo ${{ steps.date.outputs.today }}
+
   nightly:
+    needs: date
     uses: kagekirin/UnitySprache/.github/workflows/publish.yml@main
     with:
-      tag: nightly
+      tag: nightly-${{ needs.date.outputs.today }}
     secrets:
       NPM_TOKEN: ${{secrets.NPM_TOKEN}}

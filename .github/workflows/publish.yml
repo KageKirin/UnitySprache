@@ -29,6 +29,8 @@ jobs:
       - name: Generate metafiles
         run: |
           npm install -g https://github.com/kagekirin/metagen-js/tarball/main
+          metagen -s UnitySprache -o "Assets/Scripts/Sprache/src"
+          metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache"
           metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/**.cs"
           metagen -s UnitySprache -o "Assets/Scripts/Sprache/src/Sprache/*/*.cs"
 
