@@ -116,7 +116,7 @@ jobs:
 
       ## section: repack
       - name: Re-pack
-        run: cd package && yarn pack
+        run: cd package && npm pack
       - name: Check package
         run: |
           ls package/*.tgz
